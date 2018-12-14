@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>VO簡易播放器</title>
+    <meta charset="UTF-8">
+
+    <style>
+        .voPlayer {
+            width: 640px;
+            height: 360px;
+            position: relative;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <script src="libs/voplayer.min.forSimple.js"></script>
+
+    <script src="sampleplayer/app/lib/jquery/jquery-1.10.2.min.js?n=1"></script>
+    <script src="sampleplayer/app/lib/AnalyticsConvert.js"></script>
+    <script src="sampleplayer/app/lib/Analytics.js"></script>
+    <script src="sampleplayer/app/lib/UserAgent.js"></script>
+
+    <table border="1" width="100%">
+        <tr>
+            <td width="20%">
+                
+                <!-- 影片div -->
+                <div>
+                    <div id="videoPlayer" class="voPlayer" controls>
+                    </div>
+                </div>
+                <!-- 影片div - End -->
+            </td>
+            <td width="80%" valign="top">
+                <input type="button" value="Open DRM Video" onclick="OpenDrmVideo();">
+                <input type="button" value="Open Live Video" onclick="OpenLiveVideo();">
+                <input type="button" value="開啟多音軌影片" onclick="OpenMultiAudioTrackVideo();">
+                <input type="button" value="開啟多字幕影片" onclick="OpenMultiSubtitleVideo();">
+
+
+<p></p>
+                <input type="button" value="play" onclick="player.play();">
+                <input type="button" value="pause" onclick="player.pause();">
+                <input type="button" value="close" onclick="ClosePlayer()">
+                設定播放速度0.5~2.0<input id="txtPlaySpeed" type="text" name="T1" value="1" size="3">
+                <input type='button' value='設定播放速度' onclick='player.setAudioPlaybackSpeed(document.getElementById("txtPlaySpeed").value)'/>
+
+<p></p>
+                <input type="button" value="影片長度" onclick="console.log(player.getDuration())">
+                <input type="button" value="目前影片位置" onclick="console.log(player.getPosition())">
+                設定播放位置<input id="txtPosition" type="text" name="T1" value="2" size="3">
+                <input type='button' value='設定播放位置' onclick='player.setPosition(document.getElementById("txtPosition").value)'/>
+                
+<p></p>
+                <input type="button" value="查詢現在音量" onclick="console.log(player.getVolume())">
+                設定音量0.0~1.0<input id="txtVolume" type="text" name="T1" value="0.2" size="3">
+                <input type='button' value='設定音量' onclick='player.setVolume(document.getElementById("txtVolume").value)'/>
+                <input type="button" value="查詢是否為靜音" onclick="console.log(player.isMuted())">
+                <input type="button" value="設定為靜音" onclick="player.mute()">
+                <input type="button" value="設定為非靜音" onclick="player.unmute()">
+                
+<p></p>
+                <input type="button" value="是否為live" onclick="console.log(player.isLive())">
+                <input type="button" value="是否為暫停" onclick="console.log(player.isPaused())">
+                <input type="button" value="影片是否已經結束" onclick="console.log(player.isEnded())">
+
+<p></p>
+                <input type="button" value="取回目前播放音軌" onclick="console.log(player.getAudioTracks())">
+                <input type="button" value="取回音軌清單" onclick="console.log(player.getAudioTracks())">
+                <input type="button" value="設定播放音軌1" onclick="player.selectAudioTrack(player.getAudioTracks()[0]['id']);">
+                <input type="button" value="設定播放音軌2" onclick="player.selectAudioTrack(player.getAudioTracks()[1]['id']);">
+                <input type="button" value="設定播放音軌3" onclick="player.selectAudioTrack(player.getAudioTracks()[2]['id']);">
+
+<p></p>
+                <input type="button" value="取回目前播放影片" onclick="console.log(player.getCurrentQualityLevel())">
+                <input type="button" value="取回影片清單" onclick="console.log(player.getQualityLevels())">
+                <input type="button" value="設定播放影片1" onclick="player.selectQualityLevel(player.getQualityLevels()[0]['id']);">
+                <input type="button" value="設定播放影片2" onclick="player.selectQualityLevel(player.getQualityLevels()[1]['id']);">
+                <input type="button" value="設定播放影片3" onclick="player.selectQualityLevel(player.getQualityLevels()[2]['id']);">
+                <input type="button" value="設定播放影片4" onclick="player.selectQualityLevel(player.getQualityLevels()[3]['id']);">
+
+<p></p>
+                <input type="button" value="取回目前播放字幕" onclick="console.log(player.getCurrentSubtitleTrack())">
+                <input type="button" value="取回字幕清單" onclick="console.log(player.getSubtitleTracks())">
+                <input type="button" value="設定字幕關閉" onclick="player.selectSubtitleTrack('');">
+                <input type="button" value="設定播放字幕1" onclick="player.selectSubtitleTrack(player.getSubtitleTracks()[0]['id']);">
+                <input type="button" value="設定播放字幕2" onclick="player.selectSubtitleTrack(player.getSubtitleTracks()[1]['id']);">
+                <input type="button" value="設定播放字幕3" onclick="player.selectSubtitleTrack(player.getSubtitleTracks()[2]['id']);">
+                <input type="button" value="設定播放字幕4" onclick="player.selectSubtitleTrack(player.getSubtitleTracks()[3]['id']);">
+
+
+
+
+            </td>
+        </tr>
+    </table>
+
+
+
+
+    <script>
+        function OpenMultiSubtitleVideo()
+        {
+            // 影片變更,需要重新設定 playuri 此變數
+            playuri = "https://vm2.dashif.org/dash/vod/testpic_2s/multi_subs.mpd";
+            var source;
+            source = {
+                links: [{
+                    uri: playuri
+                }]
+            };
+            var v=player.open(source);
+        }
+
+        function OpenMultiAudioTrackVideo()
+        {
+            // 影片變更,需要重新設定 playuri 此變數
+            playuri = "https://wowzaec2demo.streamlock.net/vod-multitrack/_definst_/smil:ElephantsDream/ElephantsDream.smil/manifest.mpd";
+            var source;
+            source = {
+                links: [{
+                    uri: playuri
+                }]
+            };
+            var v=player.open(source);
+        }
+
+        function OpenLiveVideo()
+        {
+            // 影片變更,需要重新設定 playuri 此變數
+            playuri = "https://vm2.dashif.org/livesim/testpic_2s/Manifest.mpd";
+            var source;
+            source = {
+                links: [{
+                    uri: playuri
+                }]
+            };
+            var v=player.open(source);
+        }
+
+        function OpenDrmVideo()
+        {
+            // 影片變更,需要重新設定 playuri 此變數
+            playuri = "https://edge01t.video.friday.tw/bps/30266.smil/manifest.mpd?token=0270048b6043e0b14837b15e88c658fb";
+            var source;
+            source = 
+            {
+                links: 
+                [{
+                    uri: playuri,
+
+                    drm: 
+                    {
+                        widevine: 
+                        {
+                            laUrl: "https://widevinet.video.friday.tw/?deviceId=Y2ZjMWM1NzAtM2RhZC0zOTgwLTg5YjgtYTdjOTBiNzljMjM0"
+                         }
+                    }
+                }]
+            };
+            player.open(source);
+        }
+        
+        
+        
+        function ClosePlayer()
+        {
+            player.close();
+            // AnalyticsListen傳送分析資訊到緩衝區
+            AnalyticsListen(0, "VO_OSMP_CB_STOP_COMPLETE", playuri, player.isMuted(), player.getVolume(), player.getDuration(), player.getPosition(), true, player.getVersion());
+        }
+        
+        
+        // 以下為分析系統會使用到的全域變數,請勿移除
+        var player = new voPlayer.Player(document.getElementById("videoPlayer"));    // 物件名稱請勿異動.播放器物件
+        var playuri = "https://dash.edgesuite.net/akamai/bbb_30fps/bbb_30fps.mpd";   // 變數名稱請勿異動.影片連結
+        AnalyticsInitinze();
+
+        main();
+        
+        
+        function main()
+        {
+            var config = {
+                playback: {
+                    autoPlay: true
+                }
+            };
+            player.init(config);
+    
+            var source;
+            source = {
+                links: [{
+                    uri: playuri
+                }]
+            };
+            var v=player.open(source);
+
+
+            // 事件部分
+            player.addEventListener(voPlayer.events.VO_OSMP_CB_PLAY_STARTED, onPlayStarted, false);
+            player.addEventListener(voPlayer.events.VO_OSMP_CB_PLAY_PAUSED, onPlayPaused, false);
+            player.addEventListener(voPlayer.events.VO_OSMP_CB_PLAY_WAITING, onPlayWaiting, false);
+            player.addEventListener(voPlayer.events.VO_OSMP_CB_PLAY_PLAYING, onPlayPlaying, false);
+            player.addEventListener(voPlayer.events.VO_OSMP_SRC_ADAPTIVE_STREAMING_INFO_EVENT_BITRATE_CHANGE, onBitrateChanged, false);
+    
+            //Begin VO task 64960 add event listener for testing VO_OSMP_SRC_CB_CUSTOMER_TAG
+            player.addEventListener(voPlayer.events.VO_OSMP_SRC_CB_CUSTOMER_TAG, function() {}, false);
+            //End VO
+    
+            player.addEventListener(voPlayer.events.VO_OSMP_CB_PLAY_TIME_UPDATED, onPlayTimeUpdated, false);
+            player.addEventListener(voPlayer.events.VO_OSMP_CB_SEEK_START, onSeekStart, false);
+            player.addEventListener(voPlayer.events.VO_OSMP_CB_SEEK_COMPLETE, onSeekComplete, false);
+            player.addEventListener(voPlayer.events.VO_OSMP_SRC_CB_OPEN_FINISHED, onOpenComplete, false);
+            player.addEventListener(voPlayer.events.VO_OSMP_CB_PLAY_COMPLETE, onPlaybackComplete, false);
+            player.addEventListener(voPlayer.events.VO_OSMP_SRC_CB_PROGRAM_CHANGED, onProgramChanged, false);
+            /*
+            player.addEventListener(voPlayer.events.VO_LOG_SERVER_CONNECTED, onLogServerConnected, false);
+            player.addEventListener(voPlayer.events.VO_LOG_SERVER_DISCONNECTED, onLogServerDisconnected, false);
+             */
+            player.addEventListener(voPlayer.events.VO_OSMP_CB_LOG_ADDED, onLogAdded, false);
+            player.addEventListener(voPlayer.events.VO_OSMP_CB_ERROR_EVENTS, onErrorAdded, false);
+            player.addEventListener(voPlayer.events.VO_OSMP_CB_PIP_MODE_CHANGED, onPipModeChanged, false);
+    
+            // detect remote play volume changed event
+            player.addEventListener(voPlayer.events.VO_OSMP_SRC_CB_REMOTE_PLAYER_VOLUME_CHANGED, onRemotePlayerVolumeChanged, false);
+            player.addEventListener(voPlayer.events.VO_OSMP_SRC_CB_REMOTE_PLAYER_MUTED_CHANGED, onRemotePlayerMutedChanged, false);
+        }
+        
+
+        
+
+        function onPlayStarted(event) {
+            console.log("開始播放影片 onPlayStarted()");
+        }
+
+        function onPlayPaused(event) {
+            console.log("暫停  onPlayPaused()");
+        }
+
+        function onPlayWaiting(event) {
+            console.log("緩衝讀取 onPlayWaiting()");
+        }
+
+        function onPlayPlaying(event) {
+            console.log("影片播放中  onPlayPlaying()");
+        }
+
+
+        function onBitrateChanged(event) {
+            console.log("影片解析度改變  onBitrateChanged()");
+        }
+
+        //End VO
+
+        function onPlayTimeUpdated(event) {
+            //console.log("時間更新通知  onPlayTimeUpdated()");
+        }
+
+        function onSeekStart(event) {
+            console.log("緩衝開始讀取  onSeekComplete()");
+        }
+
+        function onSeekComplete(event) {
+            console.log("緩衝讀取完成  onSeekComplete()");
+        }
+
+        function onOpenComplete(event) {
+            console.log("影片開啟完成  onOpenComplete()");
+        }
+
+        function onPlaybackComplete(event) {
+            console.log("function  onPlaybackComplete()");
+        }
+
+        function onProgramChanged(event) {
+            console.log("function  onProgramChanged()");
+        }
+
+        function onLogAdded(event) {
+            // 可以在這暫停程式.查閱 player 所有相關的方法與事件以及屬性
+            
+            // AnalyticsListen傳送分析資訊到緩衝區
+            AnalyticsListen(0, event.message.toString(), playuri, player.isMuted(), player.getVolume(), player.getDuration(), player.getPosition(), true, player.getVersion());
+        }
+
+        function onErrorAdded(event) {
+            
+            // AnalyticsListen傳送分析資訊到緩衝區
+            AnalyticsListen(event.code, event.message.toString(), playuri, player.isMuted(), player.getVolume(), player.getDuration(), player.getPosition(), true, player.getVersion());
+            console.log("function  onErrorAdded()");
+        }
+
+        function onPipModeChanged(event) {
+            console.log("function  onPipModeChanged()");
+        }
+
+        // detect remote play volume changed event
+        function onRemotePlayerVolumeChanged(event) {
+            console.log("function  onRemotePlayerVolumeChanged()");
+        }
+
+        function onRemotePlayerMutedChanged(event) {
+            console.log("function  onRemotePlayerMutedChanged()");
+        }
+    </script>
+</body>
+
+</html>
+
